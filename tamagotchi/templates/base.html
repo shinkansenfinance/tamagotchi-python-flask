@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    {% block head %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
+    {% endblock %}    
+    <title>{% block title %}Tamagotchi{% endblock %}</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/front.js"></script>
+</head>
+
+<body>
+    <main class="container">        
+        <nav>
+            <ul>
+                <li><strong>Tamagotchi</strong></li>
+            </ul>
+            <ul>
+                <li><a href="/payouts">Payouts</a></li>
+            </ul>
+        </nav>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <ul class=flashes>
+          {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+          {% endfor %}
+          </ul>
+        {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+</body>
+
+</html>

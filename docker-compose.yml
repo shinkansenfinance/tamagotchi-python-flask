@@ -1,0 +1,11 @@
+version: "3.9"  # optional since v1.27.0
+services:
+  web:
+    build: .
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      - TAMAGOTCHI_API_KEY
+      - TAMAGOTCHI_CERTIFICATE
+      - TAMAGOTCHI_CERTIFICATE_PRIVATE_KEY
+      - FLASK_SECRET_KEY

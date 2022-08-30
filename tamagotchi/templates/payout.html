@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<h2> Payout {{ payout.id }} </h2>
+<article>
+    <dl class="payout">
+        <dt>Message id:</dt>
+        <dd>{{ payout.id }}</dd>
+        <dt>Transaction id:</dt>
+        <dd>{{ payout.transaction_id }}</dd>
+        <dt>Shinkansen transaction id: </dt>
+        <dd>{{ payout.shinkansen_transaction_id }}</dd>
+        <dt>Timestamp:</dt>
+        <dd>{{ payout.creation_date }}</dd>
+        <dt>Status:</dt>
+        <dd><code>{{ payout.status }} </code></dd>
+        <dt>Respuesta:</dt>
+        <dd><code>{{ payout.response_status }}</code></dd>
+        <dt>Monto:</dt>
+        <dd>CLP $ {{ payout.amount }}</dd>
+        <dt>Destinatario:</dt>
+        <dd class="destination">
+            {{ payout.destination_name }}
+            <ul>
+            <li>🪪  {{ payout.destination_rut }}</li>
+            <li>✉️ {{ payout.destination_email }}</li>
+            <li>🏦 {{ payout.destination_bank }} : {{ payout.destination_account }} <code>{{ payout.destination_account_type }}</code></li>
+            </ul>
+        </dd>
+    </dl>
+    <h3>Contenido del mensaje</h3> 
+    <textarea readonly cols="80" rows="10">{{ payout.content }}</textarea> 
+    <h3>Firma</h3>
+    <textarea readonly cols="80" rows="20">{{ payout.signature }}</textarea>
+    <button class="secondary" onclick="history.back()">Volver Atrás</button>    
+</article>
+{% endblock %}

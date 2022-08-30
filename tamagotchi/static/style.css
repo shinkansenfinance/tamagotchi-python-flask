@@ -1,0 +1,13 @@
+table.payouts td.destination li {        
+    list-style: none;
+}
+
+table.payouts  {
+    font-size: small;
+}
+
+.error {
+    background-color: brown;
+    color: lightgray;
+    border: 2px dotted red;
+}

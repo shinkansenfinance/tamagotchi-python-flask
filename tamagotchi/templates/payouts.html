@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<h2> Payouts </h2>
+<article>
+    <figure><table role="grid" class="payouts">
+        <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Timestamp</th>
+                <th scope="col" width="10%">Status</th>
+                <th scope="col" width="10%">Respuesta</th>
+                <th scope="col" width="20%">Monto</th>
+                <th scope="col" width="30%">Destinatario</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for payout in payouts %}
+            <tr>
+                <th scope="row"><a href="{{ payout.id }}">{{ payout.id }}</a></th>
+                <td>{{ payout.creation_date }}</th>
+                <td><code>{{ payout.status }} </code></td>
+                <td><code>{{ payout.response_status }}</code></td>
+                <td>CLP $ {{ payout.amount }}</td>
+                <td class="destination">
+                    {{ payout.destination_name }}
+                    <ul>
+                    <li>🪪  {{ payout.destination_rut }}</li>
+                    <li>✉️ {{ payout.destination_email }}</li>
+                    <li>🏦 {{ payout.destination_bank }} : {{ payout.destination_account }} <code>{{ payout.destination_account_type }}</code></li>
+                    </ul>
+                </td>
+            </tr>
+            {% endfor %}            
+        </tbody>
+    </table></figure>
+    <a href="/payouts/new" role="button">Nuevo Payout</a>
+
+    {% endblock %}
+</article>

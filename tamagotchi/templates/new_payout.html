@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Payouts - Nuevo</h2> 
+<article>
+    <form action="/payouts/" method="post">
+        <label for="amount">
+            Monto:
+            <input type="text" class="currency-clp random-int-value" name="amount" value="$ 5.000" required>
+        </label>
+        <label for="description">
+            Descripción:
+            <input type="text" name="description" value="Transferencia de prueba" required>
+        </label>        
+        <label for="name">
+            Nombre Destinatario:
+            <input type="text" name="name" value="Juan Perez" required>
+        </label>        
+        <label for="rut">
+            RUT Destinatario:
+            <input type="text" class="rut" name="rut" value="11.111.111-1" required>
+        </label>
+        <label for="email">
+            Email Destinatario:
+            <input type="email" name="email" value="juan@perez.cl" required>
+        </label>
+        <label for="bank">
+            Banco o Institución Destinatario:
+            <select name="bank_id">
+                {% for id in banks %}
+                <option value="{{ id }}" {% if loop.first %}selected {% endif %}> {{ id }} </option>
+                {% endfor %}
+            </select>
+        </label>
+        <label for="account_number">
+            Cuenta Destinatario:
+            <input type="text" name="account_number" value="123456789" required>
+        </label>
+        <label for="account_type">
+            Tipo de Cuenta Destinatario:
+            <select name="account_type">
+                {% for id in account_types %}
+                <option value="{{ id }}" {% if loop.first %}selected {% endif %}>{{ id }}</option>
+                {% endfor %}
+            </select>
+        </label>        
+        <button type="submit">Enviar</button>
+
+    </form>
+    <button class="secondary" onclick="history.back()">Volver Atrás</button>    
+</article>
+{% endblock %}
