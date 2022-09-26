@@ -17,7 +17,7 @@ from shinkansen.payouts import (
 )
 from shinkansen import jws
 
-TAMAGOTCHI = FinancialInstitution("TAMAGOTCHI")
+TAMAGOTCHI = FinancialInstitution(os.getenv("TAMAGOTCHI_SENDER", "TAMAGOTCHI"))
 BICE = FinancialInstitution("BANCO_BICE_CL")
 TAMAGOTCHI_ACCOUNT = PayoutDebtor(
     name="Fictional Tamagotchi SpA",

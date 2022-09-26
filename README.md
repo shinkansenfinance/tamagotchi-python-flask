@@ -13,11 +13,13 @@ Install and run with poetry:
     $ poetry install
     $ poetry shell
 
-Then set the required environment variables:
-    - TAMAGOTCHI_API_KEY: A valid API Key for the Shinkansen's testing network
-    - TAMAGOTCHI_CERTIFICATE: A certificate registered in Shinkansen's testing network
-    - TAMAGOTCHI_CERTIFICATE_PRIVATE_KEY: The certificate private key
-    - FLASK_SECRET_KEY: A random string
+Then set the following environment variables:
+    - `TAMAGOTCHI_API_KEY`: A valid API Key for the Shinkansen's testing network
+    - `TAMAGOTCHI_CERTIFICATE`: A certificate registered in Shinkansen's testing network
+    - `TAMAGOTCHI_CERTIFICATE_PRIVATE_KEY`: The certificate private key
+    - `TAMAGOTCHI_SENDER`: The identifier of the financial institution sending messages in the Shinkansen's testing network. Defaults to 'TAMAGOTCHI' if not set.
+    - `FLASK_SECRET_KEY`: A random string
+
 
 And finally run it (inside the poetry shell):
 
@@ -28,9 +30,9 @@ And finally run it (inside the poetry shell):
 
 The current deploy was hastily put together and should be improved. But works.
 
-It's a faily simple docker image (see `Dockerfile``) which can be tested with
+It's a fairly simple docker image (see `Dockerfile`) which can be tested with
 docker-compose up (see `docker-compose.yml`) and deployed to fly.io (see
-`fly.toml).
+`fly.toml`).
 
 Deploy with:
 
