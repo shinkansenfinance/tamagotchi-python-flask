@@ -187,7 +187,7 @@ def post_payout():
         TAMAGOTCHI_CERTIFICATE_PRIVATE_KEY,
         TAMAGOTCHI_CERTIFICATE,
         TAMAGOTCHI_API_KEY,
-        base_url="https://testing.shinkansen.finance/v1/",
+        base_url="https://testing.shinkansen.finance/v1",
     )
     if response.http_status_code in (200, 409):
         shinkansen_transaction_id = response.transaction_ids[
