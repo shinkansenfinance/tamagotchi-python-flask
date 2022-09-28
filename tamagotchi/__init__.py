@@ -21,9 +21,9 @@ TAMAGOTCHI = FinancialInstitution(os.getenv("TAMAGOTCHI_SENDER", "TAMAGOTCHI"))
 BICE = FinancialInstitution("BANCO_BICE_CL")
 TAMAGOTCHI_ACCOUNT = PayoutDebtor(
     name="Fictional Tamagotchi SpA",
-    identification=PersonId("CLID", "11111111-1"),
+    identification=PersonId("CLID", os.getenv("TAMAGOTCHI_RUT", "11111111-1")),
     financial_institution=BICE,
-    account="4242424242424242",
+    account=os.getenv("TAMAGOTCHI_ACCOUNT_NUMBER", "4242424242424242"),
     account_type=CURRENT_ACCOUNT,
     email="team@shinkansen.cl",
 )
