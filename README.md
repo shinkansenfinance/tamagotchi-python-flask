@@ -24,7 +24,8 @@ Then set the following environment variables:
   - `TAMAGOTCHI_SENDER`: The identifier of the financial institution sending
      messages in the Shinkansen's testing network. Defaults to "TAMAGOTCHI" if
      not set.
-  - `TAMAGOTCHI_LEGAL_NAME`: The legal name to be used for the sender
+  - `TAMAGOTCHI_LEGAL_NAME`: The legal name to be used for the sender.
+    Defaults to "Fictional Tamagotchi SpA" if not set.
   - `TAMAGOTCHI_RUT`: The tax id to be used for the sender. Defaults to
     "11111111-1" if not set.
   - `TAMAGOTCHI_ACCOUNT_NUMBER`: The account number to be used for the sender.
