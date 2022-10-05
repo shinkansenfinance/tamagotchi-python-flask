@@ -534,7 +534,7 @@ testing = ["argcomplete", "hypothesis (>=3.56)", "mock", "nose", "requests", "xm
 
 [[package]]
 name = "python-shinkansen"
-version = "0.5.1"
+version = "0.5.2"
 description = "Python helpers for Shinkansen"
 category = "main"
 optional = false
@@ -1052,8 +1052,8 @@ pytest = [
     {file = "pytest-5.4.3.tar.gz", hash = "sha256:7979331bfcba207414f5e1263b5a0f8f521d0f457318836a7355531ed1a4c7d8"},
 ]
 python-shinkansen = [
-    {file = "python-shinkansen-0.5.1.tar.gz", hash = "sha256:0d73d7e2f70473e83e67da0752409bb2441387994bb87e3865b32f6a334e212d"},
-    {file = "python_shinkansen-0.5.1-py3-none-any.whl", hash = "sha256:f25c57dcbca7bc02d360e46607a3867f51c921136a755a0709656f406c606eca"},
+    {file = "python-shinkansen-0.5.2.tar.gz", hash = "sha256:2ebd8f99049f004ee0c8d48224900562628e162a7e02933466c85c949de5bc95"},
+    {file = "python_shinkansen-0.5.2-py3-none-any.whl", hash = "sha256:2c8b7456bf2dcaa9de9f6bd9c8fddebedd1f27d73df69a3df538e37fb5a8caf9"},
 ]
 requests = [
     {file = "requests-2.28.1-py3-none-any.whl", hash = "sha256:8fefa2a1a1365bf5520aac41836fbee479da67864514bdb821f31ce07ce65349"},
