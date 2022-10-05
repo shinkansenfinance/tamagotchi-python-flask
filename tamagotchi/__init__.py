@@ -224,6 +224,19 @@ def new_payout():
     )
 
 
+@app.post("/shinkansen/messages/")
+def post_shinkansen_message():
+    print(
+        f"""New Shinkansen Message
+
+Signature: {request.headers.get("Shinkansen-JWS-Signature", "<NOT-PRESENT>")}
+Body: {repr(request.json)}
+
+"""
+    )
+    return ""
+
+
 @app.cli.add_command
 @click.command("init-db")
 def init_db():
