@@ -15,6 +15,7 @@ Install and run with poetry:
 
 Then set the following environment variables:
 
+  - `FLASK_SECRET_KEY`: A random string.
   - `TAMAGOTCHI_API_KEY`: A valid API Key for the Shinkansen's testing network
   - `TAMAGOTCHI_CERTIFICATE`: A certificate registered in Shinkansen's testing
     network (as a PEM string).
@@ -28,7 +29,7 @@ Then set the following environment variables:
     "11111111-1" if not set.
   - `TAMAGOTCHI_ACCOUNT_NUMBER`: The account number to be used for the sender.
     Defaults to "4242424242424242" if not set.
-  - `FLASK_SECRET_KEY`: A random string.
+
 
 
 And finally run it (inside the poetry shell):
