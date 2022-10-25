@@ -1,5 +1,5 @@
-import os, re, click, requests
-from flask import Flask, render_template, redirect, request, flash
+import os, re, click
+from flask import Flask, render_template, redirect, request, flash, abort
 from flask_sqlalchemy import SQLAlchemy
 from shinkansen.payouts import (
     PayoutMessage,
@@ -15,6 +15,7 @@ from shinkansen.payouts import (
     SHINKANSEN,
     CLP,
 )
+from shinkansen.responses import ResponseMessage, PayoutResponse
 from shinkansen import jws
 
 TAMAGOTCHI = FinancialInstitution(os.getenv("TAMAGOTCHI_SENDER", "TAMAGOTCHI"))
@@ -42,6 +43,16 @@ TAMAGOTCHI_CERTIFICATE = jws.certificate_from_pem_bytes(
 TAMAGOTCHI_CERTIFICATE_PRIVATE_KEY = jws.private_key_from_pem_bytes(
     required_env("TAMAGOTCHI_CERTIFICATE_PRIVATE_KEY").encode("UTF-8")
 )
+TAMAGOTCHI_API_KEY = required_env("TAMAGOTCHI_API_KEY")
+
+SHINKANSEN_CERTIFICATE_1 = required_env("SHINKANSEN_CERTIFICATE_1")
+SHINKANSEN_CERTIFICATE_2 = os.getenv("SHINKANSEN_CERTIFICATE_2")
+
+SHINKANSEN_CERTIFICATES = [
+    jws.certificate_from_pem_bytes(c.encode("UTF-8"))
+    for c in [SHINKANSEN_CERTIFICATE_1, SHINKANSEN_CERTIFICATE_2]
+    if c is not None
+]
 
 
 def force_rut_format(raw_rut: str) -> str:
@@ -88,9 +99,9 @@ db = SQLAlchemy(app)
 class PersistedSingleTransactionPayoutMessage(db.Model):
     id = db.Column(db.String(36), primary_key=True)
     shinkansen_transaction_id = db.Column(db.String(36))
-    content = db.Column(db.JSON())
+    content = db.Column(db.Text())
     signature = db.Column(db.Text())
-    response_content = db.Column(db.JSON())
+    response_content = db.Column(db.Text())
     response_signature = db.Column(db.Text())
 
     def __repr__(self) -> str:
@@ -111,7 +122,9 @@ class PersistedSingleTransactionPayoutMessage(db.Model):
 
     @property
     def status(self) -> str:
-        return self.response.status if self.response else "pending"
+        return (
+            self.response.shinkansen_transaction_status if self.response else "pending"
+        )
 
     @property
     def response_status(self) -> str:
@@ -158,8 +171,18 @@ class PersistedSingleTransactionPayoutMessage(db.Model):
         return self.transaction.creditor.account_type
 
     @property
-    def response(self) -> PayoutMessage:
-        return None
+    def response(self) -> PayoutResponse:
+        if self.response_content is None:
+            return None
+        response_message = ResponseMessage.from_json(self.response_content)
+        # We have a full response message which might contain responses for
+        # multiple transactions. We only care about the response for the
+        # transaction id we sent.
+        return next(
+            r
+            for r in response_message.responses
+            if r.shinkansen_transaction_id == self.shinkansen_transaction_id
+        )
 
 
 def new_header() -> PayoutMessageHeader:
@@ -226,15 +249,37 @@ def new_payout():
 
 @app.post("/shinkansen/messages/")
 def post_shinkansen_message():
-    print(
-        f"""New Shinkansen Message
+    try:
+        json_data = request.get_data(as_text=True)
+        app.logger.info("message received: %s", json_data)
+        message = ResponseMessage.from_json(json_data)
+    except Exception as e:
+        logging.error(f"Error parsing message: {e}")
+        abort(400, "Error parsing message")
 
-Signature: {request.headers.get("Shinkansen-JWS-Signature", "<NOT-PRESENT>")}
-Body: {repr(request.json)}
+    if "Shinkansen-JWS-Signature" not in request.headers:
+        logging.error("Missing signature")
+        abort(400, "Missing Shinkansen-JWS-Signature header")
 
-"""
-    )
-    return ""
+    signature = request.headers["Shinkansen-JWS-Signature"]
+    app.logger.info("signature: %s", json_data)
+
+    try:
+        message.verify(signature, SHINKANSEN_CERTIFICATES, SHINKANSEN, TAMAGOTCHI)
+    except Exception as e:
+        logging.error(f"Error verifying signature: {e}")
+        abort(400, "Error verifying signature")
+    for response in message.responses:
+        PersistedSingleTransactionPayoutMessage.query.filter_by(
+            shinkansen_transaction_id=response.shinkansen_transaction_id
+        ).update(
+            {
+                "response_content": json_data,
+                "response_signature": signature,
+            }
+        )
+    db.session.commit()
+    return ("", 200)
 
 
 @app.cli.add_command

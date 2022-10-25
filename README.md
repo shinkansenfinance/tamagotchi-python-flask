@@ -16,6 +16,10 @@ Install and run with poetry:
 Then set the following environment variables:
 
   - `FLASK_SECRET_KEY`: A random string.
+  - `SHINKANSEN_CERTIFICATE_1` A certificate to validate Shinkansen's messages 
+    (as a PEM string)
+  - `SHINKANSEN_CERTIFICATE_2` An optional additional certificate to validate 
+    Shinkansen's messages (as a PEM string)    
   - `TAMAGOTCHI_API_KEY`: A valid API Key for the Shinkansen's testing network
   - `TAMAGOTCHI_CERTIFICATE`: A certificate registered in Shinkansen's testing
     network (as a PEM string).

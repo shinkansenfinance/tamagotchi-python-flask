@@ -31,6 +31,12 @@
     <textarea readonly cols="80" rows="10">{{ payout.content }}</textarea> 
     <h3>Firma</h3>
     <textarea readonly cols="80" rows="20">{{ payout.signature }}</textarea>
+    <h3>Contenido de la respuesta</h3> 
+    <textarea readonly cols="80" rows="10">{{ payout.response_content }}</textarea> 
+    <h3>Firma</h3>
+    <textarea readonly cols="80" rows="20">{{ payout.response_signature }}</textarea>
+
+
     <button class="secondary" onclick="history.back()">Volver Atrás</button>    
 </article>
 {% endblock %}
