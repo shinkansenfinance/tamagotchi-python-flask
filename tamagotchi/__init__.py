@@ -54,6 +54,8 @@ SHINKANSEN_CERTIFICATES = [
     if c is not None
 ]
 
+TAMAGOTCHI_MAX_AMOUNT = os.getenv("TAMAGOTCHI_MAX_AMOUNT")
+
 
 def force_rut_format(raw_rut: str) -> str:
     rut = re.sub(r"[^\dkK]+", "", raw_rut)
@@ -63,6 +65,8 @@ def force_rut_format(raw_rut: str) -> str:
 def transaction_from_form_input(form: dict) -> PayoutTransaction:
     amount = re.sub(r"[^\d]+", "", form["amount"])
     description = form["description"]
+    if TAMAGOTCHI_MAX_AMOUNT and int(amount) > int(TAMAGOTCHI_MAX_AMOUNT):
+        amount = TAMAGOTCHI_MAX_AMOUNT
     return PayoutTransaction(
         currency=CLP,
         amount=amount,
@@ -243,7 +247,10 @@ def payout(id: str):
 @app.get("/payouts/new")
 def new_payout():
     return render_template(
-        "new_payout.html", banks=MAIN_BANKS["CL"], account_types=ACCOUNT_TYPES
+        "new_payout.html",
+        banks=MAIN_BANKS["CL"],
+        account_types=ACCOUNT_TYPES,
+        max_amount=TAMAGOTCHI_MAX_AMOUNT,
     )
 
 
