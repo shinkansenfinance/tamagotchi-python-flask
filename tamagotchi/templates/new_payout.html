@@ -3,12 +3,12 @@
 <h2>Payouts - Nuevo</h2> 
 <article>
     <form action="/payouts/" method="post">
+        {% if max_amount is not none %}
         <span>Límite: CLP {{max_amount}}. Valores superiores serán reemplazados por CLP {{max_amount}}</span>
+        {% endif %}        
         <label for="amount">
             Monto:
             <input type="text" class="currency-clp random-int-value" name="amount" value="$ 5.000" required>
-            {% if max_amount is not None %}
-            {% endif %}
         </label>
         <label for="description">
             Descripción:
