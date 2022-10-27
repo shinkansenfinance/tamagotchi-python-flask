@@ -26,7 +26,7 @@ TAMAGOTCHI_ACCOUNT = PayoutDebtor(
     financial_institution=BICE,
     account=os.getenv("TAMAGOTCHI_ACCOUNT_NUMBER", "4242424242424242"),
     account_type=CURRENT_ACCOUNT,
-    email="team@shinkansen.cl",
+    email=os.getenv("TAMAGOTCHI_EMAIL", "team@shinkansen.cl"),
 )
 
 

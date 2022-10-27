@@ -32,6 +32,8 @@ Then set the following environment variables:
     Defaults to "Fictional Tamagotchi SpA" if not set.
   - `TAMAGOTCHI_RUT`: The tax id to be used for the sender. Defaults to
     "11111111-1" if not set.
+  - `TAMAGOTCHI_EMAIL`: The email used by the sender. Defaults to 
+    team@shinkansen.cl if not set.
   - `TAMAGOTCHI_ACCOUNT_NUMBER`: The account number to be used for the sender.
     Defaults to "4242424242424242" if not set.
   - `TAMAGOTCHI_MAX_AMOUNT`: The maximum amount to allow in a payout. All payouts are 
