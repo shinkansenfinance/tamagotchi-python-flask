@@ -261,11 +261,11 @@ def post_shinkansen_message():
         app.logger.info("message received: %s", json_data)
         message = ResponseMessage.from_json(json_data)
     except Exception as e:
-        logging.error(f"Error parsing message: {e}")
+        app.logger.error(f"Error parsing message: {e}")
         abort(400, "Error parsing message")
 
     if "Shinkansen-JWS-Signature" not in request.headers:
-        logging.error("Missing signature")
+        app.logger.error("Missing signature")
         abort(400, "Missing Shinkansen-JWS-Signature header")
 
     signature = request.headers["Shinkansen-JWS-Signature"]
@@ -274,7 +274,7 @@ def post_shinkansen_message():
     try:
         message.verify(signature, SHINKANSEN_CERTIFICATES, SHINKANSEN, TAMAGOTCHI)
     except Exception as e:
-        logging.error(f"Error verifying signature: {e}")
+        app.logger.error(f"Error verifying signature: {e}")
         abort(400, "Error verifying signature")
     for response in message.responses:
         PersistedSingleTransactionPayoutMessage.query.filter_by(
