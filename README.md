@@ -36,9 +36,10 @@ Then set the following environment variables:
     team@shinkansen.cl if not set.
   - `TAMAGOTCHI_ACCOUNT_NUMBER`: The account number to be used for the sender.
     Defaults to "4242424242424242" if not set.
-  - `TAMAGOTCHI_MAX_AMOUNT`: The maximum amount to allow in a payout. All payouts are 
-    automatically capped up to this amount. 
-
+  - `TAMAGOTCHI_MAX_AMOUNT`: The maximum amount to allow in a payout. All payouts
+    are automatically capped up to this amount. 
+  - `SHINKANSEN_API_HOST`: The API host to hit. Defaults to 
+    dev.shinkansen.finance if not set. 
 
 
 And finally run it (inside the poetry shell):
