@@ -1,4 +1,4 @@
-instance/*.sqlite
+**/*.sqlite
 .vscode/
 .venv/
 *.pyc
