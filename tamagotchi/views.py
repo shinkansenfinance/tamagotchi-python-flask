@@ -1,4 +1,5 @@
 import re
+from typing import Optional, Tuple
 from flask import render_template, redirect, request, flash, abort
 from shinkansen.responses import ResponseMessage
 from shinkansen.common import SHINKANSEN, MAIN_BANKS, ACCOUNT_TYPES
@@ -13,6 +14,7 @@ from shinkansen.payouts import (
 )
 from .app import app, db
 from .models import PersistedSingleTransactionPayoutMessage
+from .tester import TestSuite, run_new_suite, finish_suite
 from .shinkansen import (
     TAMAGOTCHI,
     TAMAGOTCHI_ACCOUNT,
@@ -126,37 +128,96 @@ def new_payout():
     )
 
 
-# Callback to receive responses from Shinkansen
-@app.post("/shinkansen/messages/")
-def post_shinkansen_message():
+def response_message_from_request(request) -> ResponseMessage:
     try:
         json_data = request.get_data(as_text=True)
         app.logger.info("message received: %s", json_data)
-        message = ResponseMessage.from_json(json_data)
+        return ResponseMessage.from_json(json_data)
     except Exception as e:
         app.logger.error(f"Error parsing message: {e}")
         abort(400, "Error parsing message")
 
+
+def signature_from_request(request) -> str:
     if "Shinkansen-JWS-Signature" not in request.headers:
         app.logger.error("Missing signature")
         abort(400, "Missing Shinkansen-JWS-Signature header")
-
     signature = request.headers["Shinkansen-JWS-Signature"]
-    app.logger.info("signature: %s", json_data)
+    app.logger.info("signature: %s", signature)
+    return signature
 
+
+def verify_signature(message: ResponseMessage, signature: str):
     try:
         message.verify(signature, SHINKANSEN_CERTIFICATES, SHINKANSEN, TAMAGOTCHI)
     except Exception as e:
         app.logger.error(f"Error verifying signature: {e}")
         abort(400, "Error verifying signature")
+
+
+def persisted_message_for_shinkansen_transaction_id(
+    shinkansen_transaction_id: str,
+) -> Optional[PersistedSingleTransactionPayoutMessage]:
+    return PersistedSingleTransactionPayoutMessage.query.filter_by(
+        shinkansen_transaction_id=shinkansen_transaction_id
+    ).first()
+
+
+@app.post("/shinkansen/messages/")
+def post_shinkansen_message():
+    message = response_message_from_request(request)
+    signature = signature_from_request(request)
+    verify_signature(message, signature)
     for response in message.responses:
-        PersistedSingleTransactionPayoutMessage.query.filter_by(
-            shinkansen_transaction_id=response.shinkansen_transaction_id
-        ).update(
-            {
-                "response_content": json_data,
-                "response_signature": signature,
-            }
+        persisted_message = persisted_message_for_shinkansen_transaction_id(
+            response.shinkansen_transaction_id
         )
+        if persisted_message:
+            persisted_message.response_content = (message.original_json,)
+            persisted_message.response_signature = signature
+        else:
+            if TestSuite.current():
+                TestSuite.current().add_tester_response(response)
+            else:
+                app.logger.error(
+                    "Received response for unknown transaction: %s",
+                    response.shinkansen_transaction_id,
+                )
     db.session.commit()
     return ("", 200)
+
+
+# Extra endpoints for testing purposes
+@app.get("/tester/")
+def show_tester():
+    current_suite = TestSuite.current()
+    if current_suite:
+        transactions_with_responses = current_suite.transactions_with_responses()
+        n_transactions_sent = len(current_suite.transactions())
+        shinkansen_messages = current_suite.shinkansen_messages()
+        n_responses_received = len(transactions_with_responses)
+    else:
+        transactions_with_responses = {}
+        n_transactions_sent = 0
+        shinkansen_messages = []
+        n_responses_received = 0
+    return render_template(
+        "tester.html",
+        current_suite=current_suite,
+        transactions_with_responses=transactions_with_responses,
+        shinkansen_messages=shinkansen_messages,
+        n_transactions_sent=n_transactions_sent,
+        n_responses_received=n_responses_received,
+    )
+
+
+@app.post("/tester/start")
+def start_tester():
+    run_new_suite()
+    return redirect("/tester/")
+
+
+@app.post("/tester/stop")
+def stop_tester():
+    finish_suite()
+    return redirect("/tester/")

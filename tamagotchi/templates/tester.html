@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Tester</h2> 
+<article>
+    {% if current_suite is none %}
+    <form action="/tester/start" method="post">     
+        <button type="submit">Iniciar (gatillar mensajes)</button>
+    </form>
+    {% else %}
+    <form action="/tester/stop" method="post">     
+        <button type="submit">Finalizar suite (no esperar más respuestas)</button>
+    </form>    
+    <h3>Messages</h3>
+    <ul>
+        {% for msg in shinkansen_messages %}
+        <li>Message {{ msg.header.message_id }}</li>
+        <ul>
+            {% for tx in msg.transactions %}
+            <li>
+                Tx {{ tx.transaction_id }}: $ {{ tx.amount }}
+                {% if tx in transactions_with_responses %}
+                <ul>
+                    <li>{{ transactions_with_responses[tx].response_status }}</li>
+                </ul>
+                {% endif %}
+
+            </li>
+            {% endfor %}
+        </ul>
+        {% endfor %}
+    </ul>
+    <h3>Responses</h3>
+    <p>
+        {{ n_transactions_sent }} transactions sent.
+    </p>
+    <p>
+        {{ n_responses_received }} responses received.
+    </p>
+    <ul>
+        {% for tx, response in transactions_with_responses.items() %}
+        <li>Tx {{ tx.transaction_id }}
+        <ul>
+            <li>Response {{response.response_id}} : {{ response.response_status }}</li>
+        </ul>        
+        </li>
+        {% endfor %}
+    </ul>    
+    {% endif %}    
+</article>
+{% endblock %}

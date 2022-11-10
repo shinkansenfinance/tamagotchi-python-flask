@@ -60,3 +60,21 @@ Deploy with:
     $ flyctl deploy && flyctl deploy -a tamagotchi-bice
 
 (Make sure the env variables are set via `flyctl secrets add VAR=...`)
+
+### Testing / Stressing Shinkansen API
+
+This project also contains some code to stress test the Shinkansen Network. If you want to use it go to the `/tester/` url after setting the following environment variables:
+
+  - `TESTER_CREDITOR_1`: A colon-separated string containing the information of the creditor receiving the payout (super important to set it right if you use the tester on production).
+    - Name of the creditor
+    - RUT in format XXXXXXXX-X
+    - Bank ID (see https://docs.shinkansen.tech/docs/instituciones-financieras )
+    - Account number (only numbers)
+    - Account type (see https://docs.shinkansen.tech/docs/tipos-de-cuentas)
+    - Email
+  - `TESTER_CREDITOR_2`: Another creditor receiving payouts (with the same format)
+
+For example:
+```bash
+$ export TESTER_CREDITOR_1="Test SpA:71132123-0:BANCO_BICE_CL:01152614:current_account:test@example.org" 
+```
