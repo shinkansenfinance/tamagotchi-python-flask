@@ -21,7 +21,7 @@ from .shinkansen import (
     TAMAGOTCHI_CERTIFICATE_PRIVATE_KEY,
     SHINKANSEN_CERTIFICATES,
     TAMAGOTCHI_MAX_AMOUNT,
-    SHINKANSEN_API_HOST,
+    SHINKANSEN_BASE_URL,
 )
 
 
@@ -86,7 +86,7 @@ def post_payout():
         TAMAGOTCHI_CERTIFICATE_PRIVATE_KEY,
         TAMAGOTCHI_CERTIFICATE,
         TAMAGOTCHI_API_KEY,
-        base_url=f"https://{SHINKANSEN_API_HOST}/v1",
+        base_url=SHINKANSEN_BASE_URL,
     )
     if response.http_status_code in (200, 409):
         shinkansen_transaction_id = response.transaction_ids[
