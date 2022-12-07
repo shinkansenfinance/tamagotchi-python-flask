@@ -173,7 +173,7 @@ def post_shinkansen_message():
             response.shinkansen_transaction_id
         )
         if persisted_message:
-            persisted_message.response_content = (message.original_json,)
+            persisted_message.response_content = message.original_json
             persisted_message.response_signature = signature
         else:
             if TestSuite.current():

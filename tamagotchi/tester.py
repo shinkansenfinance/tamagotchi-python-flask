@@ -1,5 +1,5 @@
 from typing import Iterable, Optional, Iterator
-from .app import db
+from .app import db, app
 from .utils import required_env
 from .shinkansen import (
     TAMAGOTCHI,
@@ -147,21 +147,25 @@ def creditors() -> list[PayoutCreditor]:
 def run_new_suite():
     suite = TestSuite.start_new()
     messages = [
-        [f"One peso single payout {i}-{j}", one_peso_single_payout(creditor)]
+        [
+            f"One peso single payout {i}-{j}",
+            single_payout(creditor, str((i * 500) + (j + 1)), f"Test {i}-{j}"),
+        ]
         for i, creditor in enumerate(creditors())
-        for j in range(50)
+        for j in range(500)
         # ] + [
         #     [f"Few pesos multi payout {i}", few_pesos_multiple_payouts(creditor)]
         #     for i, creditor in enumerate(creditors())
-        # ] + [
-        #     [f"Too many pesos single payout {i}", too_many_pesos_single_payout(creditor)]
-        #     for i, creditor in enumerate(creditors())
+    ] + [
+        [f"Too many pesos single payout {i}", too_many_pesos_single_payout(creditor)]
+        for i, creditor in enumerate(creditors())
         # ] + [
         #     [f"Mixed creditors", mixed_with_different_creditors(creditors())]
         # ] + [
         #     [f"Lots of payouts {i}", lots_of_one_peso_payouts(creditor)]
         #     for i, creditor in enumerate(creditors())
     ]
+    app.logger.warning(f"Running {len(messages)} messages")
     for description, message in messages:
         try:
             error_message = None
@@ -174,16 +178,34 @@ def run_new_suite():
         except Exception as e:
             error_message = repr(e)
         suite.add_tester_message(description, message, http_response, error_message)
+    app.logger.warning(f"{len(messages)} messages sent")
 
 
-def one_peso_single_payout(creditor: PayoutCreditor) -> PayoutMessage:
+def execute_tester_message(description: str, message: PayoutMessage):
+    try:
+        error_message = None
+        signature, http_response = message.sign_and_send(
+            TAMAGOTCHI_CERTIFICATE_PRIVATE_KEY,
+            TAMAGOTCHI_CERTIFICATE,
+            TAMAGOTCHI_API_KEY,
+            base_url=SHINKANSEN_BASE_URL,
+        )
+    except Exception as e:
+        error_message = repr(e)
+    suite = TestSuite.current()
+    suite.add_tester_message(description, message, http_response, error_message)
+
+
+def single_payout(
+    creditor: PayoutCreditor, amount: str = None, description: str = None
+) -> PayoutMessage:
     return PayoutMessage(
         header=PayoutMessageHeader(sender=TAMAGOTCHI, receiver=SHINKANSEN),
         transactions=[
             PayoutTransaction(
                 currency=CLP,
-                amount="1",
-                description="One peso alone",
+                amount=amount or "1",
+                description=description or "Test",
                 debtor=TAMAGOTCHI_ACCOUNT,
                 creditor=creditor,
             )
