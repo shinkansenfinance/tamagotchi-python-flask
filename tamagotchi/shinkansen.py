@@ -9,11 +9,11 @@ from shinkansen.payouts import (
 )
 
 TAMAGOTCHI = FinancialInstitution(os.getenv("TAMAGOTCHI_SENDER", "TAMAGOTCHI"))
-BICE = FinancialInstitution("BANCO_BICE_CL")
+TAMAGOTCHI_FI = FinancialInstitution(os.getenv("TAMAGOTCHI_FI", "BANCO_BICE_CL"))
 TAMAGOTCHI_ACCOUNT = PayoutDebtor(
     name=os.getenv("TAMAGOTCHI_LEGAL_NAME", "Fictional Tamagotchi SpA"),
     identification=PersonId("CLID", os.getenv("TAMAGOTCHI_RUT", "11111111-1")),
-    financial_institution=BICE,
+    financial_institution=TAMAGOTCHI_FI,
     account=os.getenv("TAMAGOTCHI_ACCOUNT_NUMBER", "4242424242424242"),
     account_type=CURRENT_ACCOUNT,
     email=os.getenv("TAMAGOTCHI_EMAIL", "team@shinkansen.cl"),
