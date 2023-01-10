@@ -122,10 +122,16 @@ def payout(id: str):
 def new_payout():
     return render_template(
         "new_payout.html",
-        banks=MAIN_BANKS["CL"],
+        banks=banks(),
         account_types=ACCOUNT_TYPES,
         max_amount=TAMAGOTCHI_MAX_AMOUNT,
     )
+
+
+def banks():
+    list = MAIN_BANKS["CL"]
+    list["SIMULATED_BANK"] = "Simulated Bank"
+    return list
 
 
 def response_message_from_request(request) -> ResponseMessage:
