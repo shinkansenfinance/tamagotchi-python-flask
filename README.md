@@ -57,7 +57,7 @@ docker-compose up (see `docker-compose.yml`) and deployed to fly.io (see
 
 Deploy with:
 
-    $ flyctl deploy && flyctl deploy -a tamagotchi-bice
+    $ flyctl deploy
 
 (Make sure the env variables are set via `flyctl secrets add VAR=...`)
 
