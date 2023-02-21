@@ -15,7 +15,7 @@ python-shinkansen = "^0.6.4"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
-ipython = "^8.4.0"
+ipython = "^8.10.0"
 black = {version = "^22.6.0", allow-prereleases = true}
 
 [build-system]
