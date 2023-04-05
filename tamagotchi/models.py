@@ -50,6 +50,10 @@ class PersistedSingleTransactionPayoutMessage(db.Model):
         return f"{int(self.transaction.amount):,}".replace(",", ".")
 
     @property
+    def currency(self):
+        return self.transaction.currency
+
+    @property
     def creation_date(self):
         return self.message.header.creation_date.replace("T", " ")
 

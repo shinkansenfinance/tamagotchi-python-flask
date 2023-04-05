@@ -20,7 +20,7 @@
                 <td>{{ payout.creation_date }}</th>
                 <td><code>{{ payout.status }} </code></td>
                 <td><code>{{ payout.response_status }}</code></td>
-                <td>CLP $ {{ payout.amount }}</td>
+                <td>{{ payout.currency }} $ {{ payout.amount }}</td>
                 <td class="destination">
                     {{ payout.destination_name }}
                     <ul>
