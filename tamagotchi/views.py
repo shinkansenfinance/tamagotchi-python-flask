@@ -17,7 +17,7 @@ from .models import PersistedSingleTransactionPayoutMessage
 from .tester import TestSuite, run_new_suite, finish_suite
 from .shinkansen import (
     TAMAGOTCHI,
-    TAMAGOTCHI_ACCOUNT,
+    TAMAGOTCHI_ACCOUNTS,
     TAMAGOTCHI_API_KEY,
     TAMAGOTCHI_CERTIFICATE,
     TAMAGOTCHI_CERTIFICATE_PRIVATE_KEY,
@@ -34,15 +34,20 @@ def force_rut_format(raw_rut: str) -> str:
 
 def creditor_from_form_input(form: dict) -> PayoutCreditor:
     name = form["name"]
-    rut = force_rut_format(form["rut"])
+    id_schema = form["id_schema"]
+    if id_schema == "CLID":
+        id = force_rut_format(form["rut"])
+    else:
+        id = form["id"]
     email = form["email"]
-    bank_id = form["bank_id"]
+    bank_id = form.get("bank_id")
+    financial_institution = FinancialInstitution(bank_id) if bank_id else None
     account_number = form["account_number"]
     account_type = form["account_type"]
     return PayoutCreditor(
         name=name,
-        identification=PersonId("CLID", rut),
-        financial_institution=FinancialInstitution(bank_id),
+        identification=PersonId(id_schema, id),
+        financial_institution=financial_institution,
         account=account_number,
         account_type=account_type,
         email=email,
@@ -52,13 +57,14 @@ def creditor_from_form_input(form: dict) -> PayoutCreditor:
 def transaction_from_form_input(form: dict) -> PayoutTransaction:
     amount = re.sub(r"[^\d]+", "", form["amount"])
     description = form["description"]
+    currency = form["currency"] or "CLP"
     if TAMAGOTCHI_MAX_AMOUNT and int(amount) > int(TAMAGOTCHI_MAX_AMOUNT):
         amount = TAMAGOTCHI_MAX_AMOUNT
     return PayoutTransaction(
-        currency=CLP,
+        currency=currency,
         amount=amount,
         description=description,
-        debtor=TAMAGOTCHI_ACCOUNT,
+        debtor=TAMAGOTCHI_ACCOUNTS[currency],
         creditor=creditor_from_form_input(form),
     )
 
@@ -124,6 +130,29 @@ def new_payout():
         "new_payout.html",
         banks=banks(),
         account_types=ACCOUNT_TYPES,
+        max_amount=TAMAGOTCHI_MAX_AMOUNT,
+    )
+
+
+@app.get("/payouts/new/co")
+def new_payout_co():
+    return render_template(
+        "new_payout_co.html",
+        banks={
+            "BANCOLOMBIA_CO": "Banco de Colombia",
+            "SIMULATED_BANK": "Simulated Bank",
+        },
+        account_types=["current_account", "savings_account", "electronic_deposit"],
+        max_amount=TAMAGOTCHI_MAX_AMOUNT,
+    )
+
+
+@app.get("/payouts/new/mx")
+def new_payout_mx():
+    return render_template(
+        "new_payout_co.html",
+        banks={"BBVA_BANCOMER_MX": "BBVA Bancomer", "SIMULATED_BANK": "Simulated Bank"},
+        account_types=["clabe", "current_account"],
         max_amount=TAMAGOTCHI_MAX_AMOUNT,
     )
 
