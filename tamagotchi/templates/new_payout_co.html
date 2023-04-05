@@ -4,12 +4,12 @@
 <article>
     <form action="/payouts/" method="post">
         {% if max_amount is not none %}
-        <span>Límite: CLP {{max_amount}}. Valores superiores serán reemplazados por CLP {{max_amount}}</span>
+        <span>Límite: COP {{max_amount}}. Valores superiores serán reemplazados por COP {{max_amount}}</span>
         {% endif %}        
         <label for="amount">
             Monto:
-            <input type="hidden" name="currency" value="CLP">
-            <input type="text" class="currency-clp random-int-value" name="amount" value="$ 5.000" required>
+            <input type="hidden" name="currency" value="COP">
+            <input type="text" class="random-int-value" name="amount" value="5.000" required>
         </label>
         <label for="description">
             Descripción:
@@ -19,14 +19,14 @@
             Nombre Destinatario:
             <input type="text" name="name" value="Juan Perez" required>
         </label>        
-        <label for="rut">
-            RUT Destinatario:
-            <input type="hidden" name="id_schema" value="CLID">
-            <input type="text" class="rut" name="rut" value="11.111.111-1" required>
+        <label for="id">
+            ID Destinatario:
+            <input type="text" class="id" name="id" value="11111111111" required>
+            <input type="hidden" name="id_schema" value="CONUIP">
         </label>
         <label for="email">
             Email Destinatario:
-            <input type="email" name="email" value="juan@perez.cl" required>
+            <input type="email" name="email" value="juan@perez.co" required>
         </label>
         <label for="bank">
             Banco o Institución Destinatario:

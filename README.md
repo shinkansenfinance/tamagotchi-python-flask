@@ -30,12 +30,21 @@ Then set the following environment variables:
      not set.
   - `TAMAGOTCHI_LEGAL_NAME`: The legal name to be used for the sender.
     Defaults to "Fictional Tamagotchi SpA" if not set.
-  - `TAMAGOTCHI_RUT`: The tax id to be used for the sender. Defaults to
+  - `TAMAGOTCHI_CLID` or `TAMAGOTCHI_RUT`: The chilean RUT to be used for the sender. Defaults to
     "11111111-1" if not set.
+  - `TAMAGOTCHI_MXRFC`: The mexican RFC to be used for the sender. Defaults to
+    "XAXX010101000" if not set.
+  - `TAMAGOTCHI_CONIT`: The colombian NIT to be used for the sender. Defaults to
+    123456789 if not set.
   - `TAMAGOTCHI_EMAIL`: The email used by the sender. Defaults to 
     team@shinkansen.cl if not set.
-  - `TAMAGOTCHI_ACCOUNT_NUMBER`: The account number to be used for the sender.
-    Defaults to "4242424242424242" if not set.
+  - `TAMAGOTCHI_ACCOUNT_NUMBER_CLP` or `TAMAGOTCHI_ACCOUNT_NUMBER`: The chilean
+    account number to be used for the sender. Defaults to "4242424242424242" if
+    not set.
+  - `TAMAGOTCHI_ACCOUNT_NUMBER_MXN`: The mexican account number to be used for the sender. Defaults to "4242424242424242" if
+    not set.
+  - `TAMAGOTCHI_ACCOUNT_NUMBER_COP`: The colombian account number to be used for the sender. Defaults to "4242424242424242" if
+    not set.
   - `TAMAGOTCHI_MAX_AMOUNT`: The maximum amount to allow in a payout. All payouts
     are automatically capped up to this amount. 
   - `SHINKANSEN_API_HOST`: The API host to hit. Defaults to 
