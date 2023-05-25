@@ -28,14 +28,6 @@
             Email Destinatario:
             <input type="email" name="email" value="juan@perez.co" required>
         </label>
-        <label for="bank">
-            Banco o Institución Destinatario:
-            <select name="bank_id">
-                {% for id in banks %}
-                <option value="{{ id }}" {% if loop.first %}selected {% endif %}> {{ id }} </option>
-                {% endfor %}
-            </select>
-        </label>
         <label for="account_number">
             Cuenta CLABE Destinatario:
             <input type="text" name="account_number" value="123456789" required>
