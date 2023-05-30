@@ -1,4 +1,5 @@
 import re
+import requests
 from typing import Optional, Tuple
 from flask import render_template, redirect, request, flash, abort
 from shinkansen.responses import ResponseMessage
@@ -24,6 +25,7 @@ from .shinkansen import (
     SHINKANSEN_CERTIFICATES,
     TAMAGOTCHI_MAX_AMOUNT,
     SHINKANSEN_BASE_URL,
+    SHINKANSEN_FORWARD_URL,
 )
 
 
@@ -214,10 +216,22 @@ def post_shinkansen_message():
             if TestSuite.current():
                 TestSuite.current().add_tester_response(response)
             else:
-                app.logger.error(
-                    "Received response for unknown transaction: %s",
-                    response.shinkansen_transaction_id,
-                )
+                if SHINKANSEN_FORWARD_URL:
+                    app.logger.info(f"Forwarding response to {SHINKANSEN_FORWARD_URL}")
+                    response = requests.post(
+                        url=SHINKANSEN_FORWARD_URL,
+                        data=request.get_data(),
+                        headers={
+                            "Content-Type": "application/json",
+                            "Shinkansen-JWS-Signature": signature,
+                        },
+                    )
+                    app.logger.info(f"Forwarding response: {response}")
+                else:
+                    app.logger.error(
+                        "Received response for unknown transaction: %s",
+                        response.shinkansen_transaction_id,
+                    )
     db.session.commit()
     return ("", 200)
 
