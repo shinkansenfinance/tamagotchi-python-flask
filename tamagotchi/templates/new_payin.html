@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Payins - Nuevo</h2> 
+<article>
+    <form action="/payins/" method="post">
+        <label for="amount">
+            Monto:
+            <input type="hidden" name="currency" value="CLP">
+            <input type="text" class="currency-clp random-int-value" name="amount" value="$ 5.000" required>
+        </label>
+        <label for="description">
+            Descripción:
+            <input type="text" name="description" value="Cobro de prueba" required>
+        </label>        
+        <button type="submit">Enviar</button>
+    </form>
+    <button class="secondary" onclick="history.back()">Volver Atrás</button>    
+</article>
+{% endblock %}

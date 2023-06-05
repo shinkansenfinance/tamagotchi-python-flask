@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<h2> Payins </h2>
+<article>
+    <figure><table role="grid" class="payins">
+        <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Timestamp</th>
+                <th scope="col" width="10%">Status</th>
+                <th scope="col" width="10%">Respuesta</th>
+                <th scope="col" width="20%">Monto</th>
+                <th scope="col" width="30%">Descripción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for payin in payins %}
+            <tr>
+                <th scope="row"><a href="{{ payin.id }}">{{ payin.id }}</a></th>
+                <td>{{ payin.creation_date }}</th>
+                <td><code>{{ payin.status }} </code></td>
+                <td><code>{{ payin.response_status }}</code></td>
+                <td>{{ payin.currency }} $ {{ payin.amount }}</td>
+                <td class="destination">
+                    {{ payin.description }}
+                </td>
+            </tr>
+            {% endfor %}            
+        </tbody>
+    </table></figure>
+    <a href="/payins/new" role="button">Nuevo Payin</a>
+
+    {% endblock %}
+</article>
