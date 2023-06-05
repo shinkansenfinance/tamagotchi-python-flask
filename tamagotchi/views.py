@@ -1,19 +1,29 @@
 import re
+import requests
 from typing import Optional, Tuple
 from flask import render_template, redirect, request, flash, abort
 from shinkansen.responses import ResponseMessage
-from shinkansen.common import SHINKANSEN, MAIN_BANKS, ACCOUNT_TYPES
-from shinkansen.payouts import (
-    PayoutMessage,
-    PayoutMessageHeader,
-    PayoutTransaction,
-    PayoutCreditor,
+from shinkansen.common import (
+    SHINKANSEN,
+    MAIN_BANKS,
+    ACCOUNT_TYPES,
+    CLP,
+    MessageHeader,
     FinancialInstitution,
     PersonId,
-    CLP,
+)
+from shinkansen.payouts import PayoutMessage, PayoutTransaction, PayoutCreditor
+from shinkansen.payins import (
+    PayinMessage,
+    PayinTransaction,
+    PayinDebtor,
+    INTERACTIVE_PAYMENT,
 )
 from .app import app, db
-from .models import PersistedSingleTransactionPayoutMessage
+from .models import (
+    PersistedSingleTransactionPayoutMessage,
+    PersistedSingleTransactionPayinMessage,
+)
 from .tester import TestSuite, run_new_suite, finish_suite
 from .shinkansen import (
     TAMAGOTCHI,
@@ -24,6 +34,7 @@ from .shinkansen import (
     SHINKANSEN_CERTIFICATES,
     TAMAGOTCHI_MAX_AMOUNT,
     SHINKANSEN_BASE_URL,
+    SHINKANSEN_FORWARD_URL,
 )
 
 
@@ -54,7 +65,7 @@ def creditor_from_form_input(form: dict) -> PayoutCreditor:
     )
 
 
-def transaction_from_form_input(form: dict) -> PayoutTransaction:
+def payout_transaction_from_form_input(form: dict) -> PayoutTransaction:
     amount = re.sub(r"[^\d]+", "", form["amount"])
     description = form["description"]
     currency = form["currency"] or "CLP"
@@ -69,8 +80,36 @@ def transaction_from_form_input(form: dict) -> PayoutTransaction:
     )
 
 
-def new_header() -> PayoutMessageHeader:
-    return PayoutMessageHeader(sender=TAMAGOTCHI, receiver=SHINKANSEN)
+def payin_transaction_from_form_input(form: dict) -> PayinTransaction:
+    amount = re.sub(r"[^\d]+", "", form["amount"])
+    description = form["description"]
+    currency = form["currency"] or "CLP"
+    payin_transaction = PayinTransaction(
+        payin_type=INTERACTIVE_PAYMENT,
+        currency=currency,
+        amount=amount,
+        description=description,
+        creditor=TAMAGOTCHI_ACCOUNTS[currency],
+    )
+    add_interactive_payment_urls_to_transaction(payin_transaction)
+    return payin_transaction
+
+
+def add_interactive_payment_urls_to_transaction(payin_transaction: PayinTransaction):
+    payin_transaction.interactive_payment_success_redirect_url = (
+        request.root_url
+        + "payins/interactive-success?transaction_id="
+        + payin_transaction.transaction_id
+    )
+    payin_transaction.interactive_payment_failure_redirect_url = (
+        request.root_url
+        + "payins/interactive-failure?transaction_id="
+        + payin_transaction.transaction_id
+    )
+
+
+def new_header() -> MessageHeader:
+    return MessageHeader(sender=TAMAGOTCHI, receiver=SHINKANSEN)
 
 
 @app.get("/")
@@ -85,10 +124,36 @@ def payouts():
     )
 
 
+@app.get("/payins/")
+def payins():
+    return render_template(
+        "payins.html", payins=PersistedSingleTransactionPayinMessage.query.all()
+    )
+
+
+@app.get("/payins/interactive-success")
+def payins_interactive_success():
+    tx_id = request.args.get("transaction_id", "desconocido")
+    flash(
+        f"Pago probablemente exitoso para el id interno {tx_id}. Pero esperaremos al callback para confirmarlo."
+    )
+    return redirect("/payins/")
+
+
+@app.get("/payins/interactive-failure")
+def payins_interactive_failure():
+    tx_id = request.args.get("transaction_id", "desconocido")
+    flash(
+        f"Pago probablemente fallido para el id interno {tx_id}. Pero esperaremos al callback para confirmarlo."
+    )
+    return redirect("/payins/")
+
+
 @app.post("/payouts/")
 def post_payout():
     single_payout_message = PayoutMessage(
-        header=new_header(), transactions=[transaction_from_form_input(request.form)]
+        header=new_header(),
+        transactions=[payout_transaction_from_form_input(request.form)],
     )
     signature, response = single_payout_message.sign_and_send(
         TAMAGOTCHI_CERTIFICATE_PRIVATE_KEY,
@@ -117,10 +182,54 @@ def post_payout():
     return redirect("/payouts/")
 
 
+@app.post("/payins/")
+def post_payin():
+    single_payin_message = PayinMessage(
+        header=new_header(),
+        transactions=[payin_transaction_from_form_input(request.form)],
+    )
+    signature, response = single_payin_message.sign_and_send(
+        TAMAGOTCHI_CERTIFICATE_PRIVATE_KEY,
+        TAMAGOTCHI_CERTIFICATE,
+        TAMAGOTCHI_API_KEY,
+        base_url=SHINKANSEN_BASE_URL,
+    )
+    if response.http_status_code in (200, 409):
+        shinkansen_transaction_id = response.transaction_ids[
+            single_payin_message.transactions[0].transaction_id
+        ]
+        interactive_payment_url = response.interactive_payment_urls[
+            single_payin_message.transactions[0].transaction_id
+        ]
+        persisted_payin = PersistedSingleTransactionPayinMessage(
+            message=single_payin_message,
+            signature=signature,
+            shinkansen_transaction_id=shinkansen_transaction_id,
+        )
+        db.session.add(persisted_payin)
+        db.session.commit()
+        return redirect(interactive_payment_url)
+    else:
+        flash(
+            "Error al enviar payin a Shinkansen: "
+            f"HTTP Status: {response.http_status_code}."
+            f"Errors: {response.errors}.",
+            "error",
+        )
+        return redirect("/payins/")
+
+
 @app.get("/payouts/<id>")
-def payout(id: str):
+def payin(id: str):
     return render_template(
         "payout.html", payout=PersistedSingleTransactionPayoutMessage.query.get(id)
+    )
+
+
+@app.get("/payins/<id>")
+def payout(id: str):
+    return render_template(
+        "payin.html", payin=PersistedSingleTransactionPayinMessage.query.get(id)
     )
 
 
@@ -131,6 +240,13 @@ def new_payout():
         banks=banks(),
         account_types=ACCOUNT_TYPES,
         max_amount=TAMAGOTCHI_MAX_AMOUNT,
+    )
+
+
+@app.get("/payins/new")
+def new_payin():
+    return render_template(
+        "new_payin.html",
     )
 
 
@@ -193,9 +309,14 @@ def verify_signature(message: ResponseMessage, signature: str):
 def persisted_message_for_shinkansen_transaction_id(
     shinkansen_transaction_id: str,
 ) -> Optional[PersistedSingleTransactionPayoutMessage]:
-    return PersistedSingleTransactionPayoutMessage.query.filter_by(
-        shinkansen_transaction_id=shinkansen_transaction_id
-    ).first()
+    return (
+        PersistedSingleTransactionPayoutMessage.query.filter_by(
+            shinkansen_transaction_id=shinkansen_transaction_id
+        ).first()
+        or PersistedSingleTransactionPayinMessage.query.filter_by(
+            shinkansen_transaction_id=shinkansen_transaction_id
+        ).first()
+    )
 
 
 @app.post("/shinkansen/messages/")
@@ -214,10 +335,22 @@ def post_shinkansen_message():
             if TestSuite.current():
                 TestSuite.current().add_tester_response(response)
             else:
-                app.logger.error(
-                    "Received response for unknown transaction: %s",
-                    response.shinkansen_transaction_id,
-                )
+                if SHINKANSEN_FORWARD_URL:
+                    app.logger.info(f"Forwarding response to {SHINKANSEN_FORWARD_URL}")
+                    response = requests.post(
+                        url=SHINKANSEN_FORWARD_URL,
+                        data=request.get_data(),
+                        headers={
+                            "Content-Type": "application/json",
+                            "Shinkansen-JWS-Signature": signature,
+                        },
+                    )
+                    app.logger.info(f"Forwarding response: {response}")
+                else:
+                    app.logger.error(
+                        "Received response for unknown transaction: %s",
+                        response.shinkansen_transaction_id,
+                    )
     db.session.commit()
     return ("", 200)
 
