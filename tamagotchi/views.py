@@ -188,6 +188,8 @@ def post_payin():
         header=new_header(),
         transactions=[payin_transaction_from_form_input(request.form)],
     )
+    app.logger.info(f"Sending payin message: {single_payin_message.as_json()}")
+
     signature, response = single_payin_message.sign_and_send(
         TAMAGOTCHI_CERTIFICATE_PRIVATE_KEY,
         TAMAGOTCHI_CERTIFICATE,
