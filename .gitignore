@@ -3,4 +3,4 @@
 .venv/
 *.pyc
 .env.sh
-.envrc
+.envrc*
