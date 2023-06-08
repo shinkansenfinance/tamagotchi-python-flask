@@ -25,7 +25,7 @@ from .models import (
     PersistedSingleTransactionPayinMessage,
 )
 from .tester import TestSuite, run_new_suite, finish_suite
-from .shinkansen import (
+from .settings import (
     TAMAGOTCHI,
     TAMAGOTCHI_ACCOUNTS,
     TAMAGOTCHI_API_KEY,

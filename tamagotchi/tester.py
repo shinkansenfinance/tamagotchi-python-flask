@@ -1,7 +1,7 @@
 from typing import Iterable, Optional, Iterator
 from .app import db, app
 from .utils import required_env
-from .shinkansen import (
+from .settings import (
     TAMAGOTCHI,
     TAMAGOTCHI_ACCOUNT,
     SHINKANSEN_BASE_URL,
