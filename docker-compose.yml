@@ -1,4 +1,4 @@
-version: "3.9"  # optional since v1.27.0
+version: "3.9" # optional since v1.27.0
 services:
   web:
     build: .
@@ -13,3 +13,4 @@ services:
       - TAMAGOTCHI_RUT
       - TAMAGOTCHI_ACCOUNT_NUMBER
       - TAMAGOTCHI_LEGAL_NAME
+      - SHINKANSEN_CERTIFICATE_1
