@@ -268,7 +268,7 @@ def new_payout_co():
 @app.get("/payouts/new/mx")
 def new_payout_mx():
     return render_template(
-        "new_payout_co.html",
+        "new_payout_mx.html",
         banks={"BBVA_BANCOMER_MX": "BBVA Bancomer", "SIMULATED_BANK": "Simulated Bank"},
         account_types=["clabe", "current_account"],
         max_amount=TAMAGOTCHI_MAX_AMOUNT,
