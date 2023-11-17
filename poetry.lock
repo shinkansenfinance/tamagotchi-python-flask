@@ -969,13 +969,13 @@ testing = ["argcomplete", "hypothesis (>=3.56)", "mock", "nose", "requests", "xm
 
 [[package]]
 name = "python-shinkansen"
-version = "0.7.1"
+version = "0.7.2"
 description = "Python helpers for Shinkansen"
 optional = false
 python-versions = ">=3.9,<4.0"
 files = [
-    {file = "python_shinkansen-0.7.1-py3-none-any.whl", hash = "sha256:30462b5c2f3b8b337045fbea6308ff84ab7883ed364d61257b96837064eec68b"},
-    {file = "python_shinkansen-0.7.1.tar.gz", hash = "sha256:7e2fd228b4e120e868f662b966638bd4a6202509de31516963dfec7754785e0f"},
+    {file = "python_shinkansen-0.7.2-py3-none-any.whl", hash = "sha256:425c5f398a8d9011d56a88d259730e9828417210a436b561a15f4ea2e221d0e9"},
+    {file = "python_shinkansen-0.7.2.tar.gz", hash = "sha256:ca4a028b51cf64a5c6a158505b613351c66f39c96a0e61975eef089f07feadd5"},
 ]
 
 [package.dependencies]
@@ -1308,4 +1308,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "92ac5fbab580b21f108b9b13462653fd7b627704733126fcdd25afc876eb51f0"
+content-hash = "7a60c253134fb39812dd9702e1242684d7e7aa3d933e12601fb21d8d9b3deee7"
