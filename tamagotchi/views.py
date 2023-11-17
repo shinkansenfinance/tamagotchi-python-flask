@@ -36,6 +36,22 @@ from .settings import (
     SHINKANSEN_BASE_URL,
     SHINKANSEN_FORWARD_URL,
 )
+from .utils import required_env
+
+
+from flask_httpauth import HTTPBasicAuth
+
+auth = HTTPBasicAuth()
+
+
+@auth.verify_password
+def verify_password(username, password):
+    if required_env("SHINKANSEN_API_HOST") == "api.shinkansen.finance":
+        return username == required_env(
+            "HTTP_AUTH_USERNAME"
+        ) and password == required_env("HTTP_AUTH_PASSWORD")
+    else:
+        return True
 
 
 def force_rut_format(raw_rut: str) -> str:
@@ -113,11 +129,13 @@ def new_header() -> MessageHeader:
 
 
 @app.get("/")
+@auth.login_required
 def index():
     return redirect("/payouts/")
 
 
 @app.get("/payouts/")
+@auth.login_required
 def payouts():
     return render_template(
         "payouts.html", payouts=PersistedSingleTransactionPayoutMessage.query.all()
@@ -125,6 +143,7 @@ def payouts():
 
 
 @app.get("/payins/")
+@auth.login_required
 def payins():
     return render_template(
         "payins.html", payins=PersistedSingleTransactionPayinMessage.query.all()
@@ -132,6 +151,7 @@ def payins():
 
 
 @app.get("/payins/interactive-success")
+@auth.login_required
 def payins_interactive_success():
     tx_id = request.args.get("transaction_id", "desconocido")
     flash(
@@ -141,6 +161,7 @@ def payins_interactive_success():
 
 
 @app.get("/payins/interactive-failure")
+@auth.login_required
 def payins_interactive_failure():
     tx_id = request.args.get("transaction_id", "desconocido")
     flash(
@@ -150,6 +171,7 @@ def payins_interactive_failure():
 
 
 @app.post("/payouts/")
+@auth.login_required
 def post_payout():
     single_payout_message = PayoutMessage(
         header=new_header(),
@@ -183,6 +205,7 @@ def post_payout():
 
 
 @app.post("/payins/")
+@auth.login_required
 def post_payin():
     single_payin_message = PayinMessage(
         header=new_header(),
@@ -222,6 +245,7 @@ def post_payin():
 
 
 @app.get("/payouts/<id>")
+@auth.login_required
 def payin(id: str):
     return render_template(
         "payout.html", payout=PersistedSingleTransactionPayoutMessage.query.get(id)
@@ -229,6 +253,7 @@ def payin(id: str):
 
 
 @app.get("/payins/<id>")
+@auth.login_required
 def payout(id: str):
     return render_template(
         "payin.html", payin=PersistedSingleTransactionPayinMessage.query.get(id)
@@ -236,6 +261,7 @@ def payout(id: str):
 
 
 @app.get("/payouts/new")
+@auth.login_required
 def new_payout():
     return render_template(
         "new_payout.html",
@@ -246,6 +272,7 @@ def new_payout():
 
 
 @app.get("/payins/new")
+@auth.login_required
 def new_payin():
     return render_template(
         "new_payin.html",
@@ -253,6 +280,7 @@ def new_payin():
 
 
 @app.get("/payouts/new/co")
+@auth.login_required
 def new_payout_co():
     return render_template(
         "new_payout_co.html",
@@ -266,6 +294,7 @@ def new_payout_co():
 
 
 @app.get("/payouts/new/mx")
+@auth.login_required
 def new_payout_mx():
     return render_template(
         "new_payout_mx.html",
@@ -322,6 +351,7 @@ def persisted_message_for_shinkansen_transaction_id(
 
 
 @app.post("/shinkansen/messages/")
+@auth.login_required
 def post_shinkansen_message():
     message = response_message_from_request(request)
     signature = signature_from_request(request)
@@ -359,6 +389,7 @@ def post_shinkansen_message():
 
 # Extra endpoints for testing purposes
 @app.get("/tester/")
+@auth.login_required
 def show_tester():
     current_suite = TestSuite.current()
     if current_suite:
@@ -382,12 +413,14 @@ def show_tester():
 
 
 @app.post("/tester/start")
+@auth.login_required
 def start_tester():
     run_new_suite()
     return redirect("/tester/")
 
 
 @app.post("/tester/stop")
+@auth.login_required
 def stop_tester():
     finish_suite()
     return redirect("/tester/")
