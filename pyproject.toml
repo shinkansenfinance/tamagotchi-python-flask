@@ -13,6 +13,7 @@ click = "^8.1.3"
 requests = "^2.31.0"
 gunicorn = "^20.1.0"
 python-shinkansen = "^0.7.1"
+flask-httpauth = "^4.8.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
