@@ -351,7 +351,6 @@ def persisted_message_for_shinkansen_transaction_id(
 
 
 @app.post("/shinkansen/messages/")
-@auth.login_required
 def post_shinkansen_message():
     message = response_message_from_request(request)
     signature = signature_from_request(request)

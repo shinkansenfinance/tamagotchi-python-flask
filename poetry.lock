@@ -969,13 +969,13 @@ testing = ["argcomplete", "hypothesis (>=3.56)", "mock", "nose", "requests", "xm
 
 [[package]]
 name = "python-shinkansen"
-version = "0.7.2"
+version = "0.7.3"
 description = "Python helpers for Shinkansen"
 optional = false
 python-versions = ">=3.9,<4.0"
 files = [
-    {file = "python_shinkansen-0.7.2-py3-none-any.whl", hash = "sha256:425c5f398a8d9011d56a88d259730e9828417210a436b561a15f4ea2e221d0e9"},
-    {file = "python_shinkansen-0.7.2.tar.gz", hash = "sha256:ca4a028b51cf64a5c6a158505b613351c66f39c96a0e61975eef089f07feadd5"},
+    {file = "python_shinkansen-0.7.3-py3-none-any.whl", hash = "sha256:a542bde90ca9f6706027026596d32c6a6d36e17c1f3f6fe507d674ead91399b2"},
+    {file = "python_shinkansen-0.7.3.tar.gz", hash = "sha256:a230c7c0931c23b0c01c881562280660f5700d8de321e09016723d9ab75bbc7a"},
 ]
 
 [package.dependencies]
