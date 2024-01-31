@@ -263,11 +263,18 @@ def payout(id: str):
 @app.get("/payouts/new")
 @auth.login_required
 def new_payout():
+    id = request.args.get("id")
+    payout = None
+
+    if id:
+        payout = PersistedSingleTransactionPayoutMessage.query.get(id)
+
     return render_template(
         "new_payout.html",
         banks=banks_cl(),
         account_types=ACCOUNT_TYPES,
         max_amount=TAMAGOTCHI_MAX_AMOUNT,
+        payout=payout,
     )
 
 

@@ -83,6 +83,10 @@ class PersistedSingleTransactionPayoutMessage(db.Model):
         return self.transaction.creditor.account_type
 
     @property
+    def description(self):
+        return self.transaction.description
+
+    @property
     def response(self) -> PayoutResponse:
         if self.response_content is None:
             return None
