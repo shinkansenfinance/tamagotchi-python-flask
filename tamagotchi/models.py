@@ -67,6 +67,10 @@ class PersistedSingleTransactionPayoutMessage(db.Model):
         return self.transaction.creditor.identification.id
 
     @property
+    def destination_id_schema(self):
+        return self.transaction.creditor.identification.id_schema
+
+    @property
     def destination_email(self):
         return self.transaction.creditor.email
 

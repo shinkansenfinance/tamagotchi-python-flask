@@ -2,7 +2,14 @@
 {% block content %}
 <h2> Payout {{ payout.id }} </h2>
 <article class="new_payout">
-    <a class="retry_payout" role="button" href="/payouts/new?id={{ payout.id }}">Retry</a>
+    <a 
+        class="retry_payout" 
+        role="button" 
+        {% set new_payout_routes = {'CLID': '/payouts/new', 'CONUIP': '/payouts/new/co', 'MXRFC': '/payouts/new/mx'} %}
+        href="{{ new_payout_routes[payout.destination_id_schema] }}?id={{ payout.id }}"
+    >
+        Resend
+    </a>
     <dl class="payout">
         <dt>Message id:</dt>
         <dd>{{ payout.id }}</dd>
