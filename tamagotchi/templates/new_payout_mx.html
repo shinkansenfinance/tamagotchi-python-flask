@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Payouts - Nuevo</h2> 
+<h2>Payouts - Nuevo</h2>
 <article>
     <form action="/payouts/" method="post">
         {% if max_amount is not none %}
         <span>Límite: MXN {{max_amount}}. Valores superiores serán reemplazados por MXN {{max_amount}}</span>
-        {% endif %}        
+        {% endif %}
         <label for="amount">
             Monto:
             <input type="hidden" name="currency" value="MXN">
@@ -14,11 +14,11 @@
         <label for="description">
             Descripción:
             <input type="text" name="description" value="Transferencia de prueba" required>
-        </label>        
+        </label>
         <label for="name">
             Nombre Destinatario:
             <input type="text" name="name" value="Juan Perez" required>
-        </label>        
+        </label>
         <label for="id">
             ID Destinatario:
             <input type="text" class="id" name="id" value="ABC1234567890" required>
@@ -27,6 +27,14 @@
         <label for="email">
             Email Destinatario:
             <input type="email" name="email" value="juan@perez.co" required>
+        </label>
+        <label for="bank">
+            Banco o Institución Destinatario:
+            <select name="bank_id">
+                {% for id in banks %}
+                <option value="{{ id }}" {% if loop.first %}selected {% endif %}> {{ id }} </option>
+                {% endfor %}
+            </select>
         </label>
         <label for="account_number">
             Cuenta CLABE Destinatario:
@@ -39,10 +47,10 @@
                 <option value="{{ id }}" {% if loop.first %}selected {% endif %}>{{ id }}</option>
                 {% endfor %}
             </select>
-        </label>        
+        </label>
         <button type="submit">Enviar</button>
 
     </form>
-    <button class="secondary" onclick="history.back()">Volver Atrás</button>    
+    <button class="secondary" onclick="history.back()">Volver Atrás</button>
 </article>
 {% endblock %}

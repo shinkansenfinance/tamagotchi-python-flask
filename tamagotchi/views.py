@@ -265,7 +265,7 @@ def payout(id: str):
 def new_payout():
     return render_template(
         "new_payout.html",
-        banks=banks(),
+        banks=banks_cl(),
         account_types=ACCOUNT_TYPES,
         max_amount=TAMAGOTCHI_MAX_AMOUNT,
     )
@@ -298,14 +298,19 @@ def new_payout_co():
 def new_payout_mx():
     return render_template(
         "new_payout_mx.html",
-        banks={"BBVA_BANCOMER_MX": "BBVA Bancomer", "SIMULATED_BANK": "Simulated Bank"},
+        banks=banks_mx(),
         account_types=["clabe", "current_account"],
         max_amount=TAMAGOTCHI_MAX_AMOUNT,
     )
 
 
-def banks():
+def banks_cl():
     list = MAIN_BANKS["CL"]
+    list["SIMULATED_BANK"] = "Simulated Bank"
+    return list
+
+def banks_mx():
+    list = MAIN_BANKS["MX"]
     list["SIMULATED_BANK"] = "Simulated Bank"
     return list
 
