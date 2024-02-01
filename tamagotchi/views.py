@@ -263,11 +263,18 @@ def payout(id: str):
 @app.get("/payouts/new")
 @auth.login_required
 def new_payout():
+    id = request.args.get("id")
+    payout = None
+
+    if id:
+        payout = PersistedSingleTransactionPayoutMessage.query.get(id)
+
     return render_template(
         "new_payout.html",
         banks=banks_cl(),
         account_types=ACCOUNT_TYPES,
         max_amount=TAMAGOTCHI_MAX_AMOUNT,
+        payout=payout,
     )
 
 
@@ -282,6 +289,12 @@ def new_payin():
 @app.get("/payouts/new/co")
 @auth.login_required
 def new_payout_co():
+    id = request.args.get("id")
+    payout = None
+
+    if id:
+        payout = PersistedSingleTransactionPayoutMessage.query.get(id)
+
     return render_template(
         "new_payout_co.html",
         banks={
@@ -290,17 +303,24 @@ def new_payout_co():
         },
         account_types=["current_account", "savings_account", "electronic_deposit"],
         max_amount=TAMAGOTCHI_MAX_AMOUNT,
+        payout=payout,
     )
 
 
 @app.get("/payouts/new/mx")
 @auth.login_required
 def new_payout_mx():
+    id = request.args.get("id")
+    payout = None
+
+    if id:
+        payout = PersistedSingleTransactionPayoutMessage.query.get(id)
     return render_template(
         "new_payout_mx.html",
         banks=banks_mx(),
         account_types=["clabe", "current_account"],
         max_amount=TAMAGOTCHI_MAX_AMOUNT,
+        payout=payout,
     )
 
 
