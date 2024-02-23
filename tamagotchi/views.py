@@ -1,6 +1,6 @@
 import re
 import requests
-import json
+from .constants import MX_BANKS_CODES
 from typing import Optional, Tuple
 from flask import render_template, redirect, request, flash, abort
 from shinkansen.responses import ResponseMessage
@@ -75,11 +75,7 @@ def creditor_from_form_input(form: dict) -> PayoutCreditor:
 
     if account_type == "clabe":
         bank_code = account_number[:3]
-
-        with open("mx_banks_codes.json", "r") as file:
-            data = json.load(file)
-
-        fin_id = data.get(bank_code, None)
+        fin_id = MX_BANKS_CODES.get(bank_code, None)
         financial_institution = FinancialInstitution(fin_id) if fin_id else None
 
     return PayoutCreditor(
