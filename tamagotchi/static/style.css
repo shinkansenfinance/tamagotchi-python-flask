@@ -15,9 +15,8 @@ table.payouts  {
 article.new_payout {
     position: relative;
 }
-
 a.retry_payout {
     position: absolute;
-    top: var(--block-spacing-vertical);
-    right: var(--block-spacing-horizontal);
+    top: var(--pico-block-spacing-vertical);
+    right: var(--pico-block-spacing-horizontal);
 }

@@ -7,6 +7,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 (parseInt(numericValue, 10) || 0).toLocaleString("es-CL")
         }
     });
+    document.querySelectorAll(".currency-mx").forEach(function(element) {
+        var self = element
+        self.onblur = function() {
+            var numericValue = self.value.replace(/[^0-9.]/g, '') || 0
+            self.value = "$ " + parseFloat(numericValue, 10).toFixed(2).toLocaleString()
+        }
+    });
+
     document.querySelectorAll(".rut").forEach(function(element) {
         var self = element
         self.onchange = self.onblur = function() {

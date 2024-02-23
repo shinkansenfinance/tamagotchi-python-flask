@@ -48,7 +48,7 @@ class PersistedSingleTransactionPayoutMessage(db.Model):
 
     @property
     def amount(self):
-        return f"{int(self.transaction.amount):,}".replace(",", ".")
+        return f"{float(self.transaction.amount):,}"
 
     @property
     def currency(self):

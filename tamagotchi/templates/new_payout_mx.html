@@ -9,7 +9,7 @@
         <label for="amount">
             Monto:
             <input type="hidden" name="currency" value="MXN">
-            <input type="text" name="amount" value="$ {{ payout.amount if payout else '5.000' }}" required>
+            <input class="currency-mx" type="text" name="amount" value="$ {{ payout.amount if payout else '5.000' }}" required>
         </label>
         <label for="description">
             Descripción:
@@ -28,46 +28,12 @@
             Email Destinatario:
             <input type="email" name="email" value="{{ payout.destination_email if payout else 'juan@perez.mx'}}" required>
         </label>
-        <label for="bank">
-            Banco o Institución Destinatario:
-            <select name="bank_id" selected="{{ payout.destination_bank if payout}}">
-                {% for id in banks %}
-                <option 
-                    value="{{ id }}" 
-                    {% if payout and payout.destination_bank == id %} 
-                        selected 
-                    {% else %} 
-                        {% if loop.first %}selected {% endif %} 
-                    {% endif %}
-                > 
-                    {{ id }} 
-                </option>
-                {% endfor %}
-            </select>
-        </label>
         <label for="account_number">
             Cuenta CLABE Destinatario:
             <input type="text" name="account_number" value="{{ payout.destination_account if payout else '123456789'}}" required>
         </label>
-        <label for="account_type">
-            Tipo de Cuenta Destinatario:
-            <select name="account_type">
-                {% for id in account_types %}
-                <option 
-                    value="{{ id }}" 
-                    {% if payout and payout.destination_bank == id %}
-                        selected 
-                    {% else %} 
-                        {% if loop.first %}selected {% endif %} 
-                    {% endif %}
-                > 
-                    {{ id }} 
-                </option>
-                {% endfor %}
-            </select>
-        </label>
+        <input type="hidden" name="account_type" value="clabe">
         <button type="submit">Enviar</button>
-
     </form>
     <button class="secondary" onclick="history.back()">Volver Atrás</button>
 </article>
