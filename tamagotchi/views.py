@@ -1,5 +1,6 @@
 import re
 import requests
+import json
 from typing import Optional, Tuple
 from flask import render_template, redirect, request, flash, abort
 from shinkansen.responses import ResponseMessage
@@ -71,6 +72,16 @@ def creditor_from_form_input(form: dict) -> PayoutCreditor:
     financial_institution = FinancialInstitution(bank_id) if bank_id else None
     account_number = form["account_number"]
     account_type = form["account_type"]
+
+    if account_type == "clabe":
+        bank_code = account_number[:3]
+
+        with open("mx_banks_codes.json", "r") as file:
+            data = json.load(file)
+
+        fin_id = data.get(bank_code, None)
+        financial_institution = FinancialInstitution(fin_id) if fin_id else None
+
     return PayoutCreditor(
         name=name,
         identification=PersonId(id_schema, id),
@@ -82,7 +93,7 @@ def creditor_from_form_input(form: dict) -> PayoutCreditor:
 
 
 def payout_transaction_from_form_input(form: dict) -> PayoutTransaction:
-    amount = re.sub(r"[^\d]+", "", form["amount"])
+    amount = re.sub(r"[^\d.]+", "", form["amount"])
     description = form["description"]
     currency = form["currency"] or "CLP"
     if TAMAGOTCHI_MAX_AMOUNT and int(amount) > int(TAMAGOTCHI_MAX_AMOUNT):
@@ -328,6 +339,7 @@ def banks_cl():
     list = MAIN_BANKS["CL"]
     list["SIMULATED_BANK"] = "Simulated Bank"
     return list
+
 
 def banks_mx():
     list = MAIN_BANKS["MX"]

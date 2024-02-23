@@ -9,7 +9,7 @@
         <label for="amount">
             Monto:
             <input type="hidden" name="currency" value="MXN">
-            <input type="text" name="amount" value="$ {{ payout.amount if payout else '5.000' }}" required>
+            <input class="currency" type="text" name="amount" value="$ {{ payout.amount if payout else '5.000' }}" required>
         </label>
         <label for="description">
             Descripción:
@@ -28,7 +28,7 @@
             Email Destinatario:
             <input type="email" name="email" value="{{ payout.destination_email if payout else 'juan@perez.mx'}}" required>
         </label>
-        <label for="bank">
+        <!-- <label for="bank">
             Banco o Institución Destinatario:
             <select name="bank_id" selected="{{ payout.destination_bank if payout}}">
                 {% for id in banks %}
@@ -44,12 +44,12 @@
                 </option>
                 {% endfor %}
             </select>
-        </label>
+        </label> -->
         <label for="account_number">
             Cuenta CLABE Destinatario:
             <input type="text" name="account_number" value="{{ payout.destination_account if payout else '123456789'}}" required>
         </label>
-        <label for="account_type">
+        <!-- <label for="account_type">
             Tipo de Cuenta Destinatario:
             <select name="account_type">
                 {% for id in account_types %}
@@ -65,7 +65,9 @@
                 </option>
                 {% endfor %}
             </select>
-        </label>
+        </label> -->
+        <input type="hidden" name="account_type" value="clabe">
+
         <button type="submit">Enviar</button>
 
     </form>
